@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Post</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}" />
+</head>
+<body>
+    <div class="board-container container-box">
+        <h1>게시글 목록</h1>
+        <div class="write-link">
+            <a href="/post" class="primary-btn">목록으로</a>
+            <a href="/post/write" class="primary-btn">글쓰기</a>
+        </div>
+
+        <ul class="post-list">
+            <li th:each="post : ${postPage.content}">
+                <a th:href="@{'/post/' + ${post.id}}" th:text="${post.title}"></a>
+            </li>
+        </ul>
+
+        <div class="pagination">
+            <span th:if="${postPage.hasPrevious()}">
+                <a th:href="@{'/post?page=' + ${postPage.number - 1}}">< 이전</a>
+            </span>
+
+            <span th:each="i : ${#numbers.sequence(0, postPage.totalPages - 1)}">
+                <a th:href="@{'/post?page=' + ${i}}"
+                   th:text="${i + 1}"
+                   th:classappend="${i == postPage.number} ? 'active' : ''">1</a>
+            </span>
+
+            <span th:if="${postPage.hasNext()}">
+                <a th:href="@{'/post?page=' + ${postPage.number + 1}}">다음 ></a>
+            </span>
+        </div>
+    </div>
+</body>
+</html>
