@@ -32,7 +32,7 @@ public class SecurityConfig {
                     .permitAll()
             )
             .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()  // ✅ 정적 리소스 허용
+                    .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**", "/upload-dir/**").permitAll()  // ✅ 정적 리소스 허용
                     .requestMatchers("/login", "/register").permitAll()  // 로그인, 회원가입도 허용
                     .anyRequest().authenticated()
             );

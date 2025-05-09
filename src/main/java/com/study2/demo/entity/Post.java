@@ -19,6 +19,7 @@ public class Post {
     private String title;
     private String content;
     private String writer;
+    private String file;
 
     private boolean reserved = false;
 

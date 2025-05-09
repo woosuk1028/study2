@@ -8,10 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -31,10 +28,24 @@ public class PostController {
         model.addAttribute("postDto", new PostDto());
         return "write";
     }
+
     @PostMapping("/post/write")
     public String submit(@ModelAttribute PostDto postDto, Authentication auth) {
         String writer = auth.getName();
         postService.savePost(postDto, writer);
         return "redirect:/post";
     }
+
+    @GetMapping("/post/{id}")
+    public String detail(@PathVariable Long id, Model model) {
+        model.addAttribute("post", postService.getPost(id));
+        return "detail";
+    }
+
+    @PostMapping("/post/delete/{id}")
+    public String delete(@PathVariable Long id, Model model) {
+        postService.deletePost(id);
+        return "redirect:/post";
+    }
+
 }
