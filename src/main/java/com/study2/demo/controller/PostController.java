@@ -3,6 +3,7 @@ package com.study2.demo.controller;
 import com.study2.demo.dto.PostDto;
 import com.study2.demo.entity.Post;
 import com.study2.demo.service.PostService;
+import com.study2.demo.util.ReservationLockManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class PostController {
 
     private final PostService postService;
+    private final ReservationLockManager reservationLockManager;
 
     @GetMapping("/post")
     public String postPage(@RequestParam(defaultValue = "0") int page, Model model) {
@@ -48,4 +50,24 @@ public class PostController {
         return "redirect:/post";
     }
 
+    @GetMapping("/post/reserve/{id}")
+    public String reserve(@PathVariable Long id, Model model, Authentication auth) {
+        Post post = postService.getPost(id);
+        String username = auth.getName();
+
+        if(!reservationLockManager.tryLock(id, username)) {
+            model.addAttribute("message", "이미 다른 사용자가 예매중입니다.");
+            return "reserve-fail";
+        }
+
+        model.addAttribute("post", post);
+        return "reserve";
+    }
+
+    @PostMapping("/post/reserve/unlock/{id}")
+    public String unlock(@PathVariable Long id, Authentication auth) {
+        String username = auth.getName();
+        reservationLockManager.unlock(id, username);
+        return "redirect:/post";
+    }
 }
